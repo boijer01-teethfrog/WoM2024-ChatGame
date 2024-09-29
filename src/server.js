@@ -18,6 +18,9 @@ app.get('/user/login', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/login.html'));
 });
 
+const usersRouter = require('./routes/users')
+app.use('/users', usersRouter)
+
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
