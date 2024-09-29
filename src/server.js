@@ -7,8 +7,17 @@ app.use(express.static(path.join(__dirname, '../public')));
 
 //man hamnar på loginpage som första
 app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/index.html'));
+});
+
+app.get('/user/register', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/register.html'));
+});
+
+app.get('/user/login', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/login.html'));
 });
+
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);

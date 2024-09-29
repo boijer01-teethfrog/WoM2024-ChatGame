@@ -1,0 +1,11 @@
+<script>
+    const isLoggedIn = localStorage.getItem('isLoggedIn');
+
+    if (!isLoggedIn) {
+        console.log("not logged in!")
+        window.location.href = '/user/register'
+    } else {
+        console.log("logged in!")
+        //window.location.href = '/room'
+    }
+</script>
