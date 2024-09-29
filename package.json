@@ -7,7 +7,9 @@
     "test": "test"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx prisma generate && node src/server.js",
+    "dev": "npx prisma generate && nodemon -L src/server.js"
   },
   "author": "",
   "license": "ISC",
@@ -19,6 +21,7 @@
     "mongodb": "^6.9.0"
   },
   "devDependencies": {
-    "prisma": "^5.20.0"
+    "prisma": "^5.20.0",
+    "nodemon": "^3.1.4"
   }
 }
