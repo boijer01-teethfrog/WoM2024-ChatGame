@@ -1,0 +1,41 @@
+
+body {
+    overflow-y: hidden;
+    overflow-x: hidden;
+}
+
+#MyModal {
+    visibility: hidden;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: white;
+    border-top: 2px solid black;
+    box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+}
+
+#MyModal > *{
+    padding: 0.5vw;
+}
+
+#message {
+    font-family: "Lucida Console", "Courier New", monospace;
+    border: 0;
+    width: 95%;
+}
+
+#message:focus {
+    outline: 0;
+    border-radius: 0px;
+}
+
+#message:focus-visible {
+    border: 0px;
+}
+
+#chatBtn{
+    border: 0;
+    visibility: hidden;
+}
+

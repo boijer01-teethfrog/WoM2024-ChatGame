@@ -3,9 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatroom</title>
+    <title>Movement Project</title>
 </head>
 <body>
-    WIP
+    <canvas id="myCanvas" width="1920" height="1080">  </canvas>
+    <link rel="stylesheet" href="./styles/room.css">
+
+    <div id="MyModal" class="modal">
+        <div class="modal-content">
+            <form id="chatForm">
+                <input type="text" id="message" name="message" placeholder="Write a message...." required>
+                <input type="submit" id="chatBtn">
+            </form>
+          </div>
+    </div>
+
+    <script src="./scripts/player.js"></script>
+    <script src="./scripts/input.js"></script>
+    <style src="./styles/room.css"></style>
 </body>
 </html>

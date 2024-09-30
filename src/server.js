@@ -19,6 +19,14 @@ app.get('/user/login', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/login.html'));
 });
 
+/* 
+TODO
+Ha id på rummet så man kan ha flera unika rum
+*/
+app.get('/room', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/room.html'));
+});
+
 const usersRouter = require('./routes/users')
 app.use('/user', usersRouter)
 
