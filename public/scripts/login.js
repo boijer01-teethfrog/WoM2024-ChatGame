@@ -21,7 +21,7 @@ async function register(user, pass) {
         localStorage.setItem('hex', user.hex);
         localStorage.setItem('role', user.role);
         localStorage.setItem('isLoggedIn', 'true');
-        window.location.href = "../room.html";
+        window.location.href = "./room";
     } else {
         console.error("Login failed:", respData.msg);
     }
