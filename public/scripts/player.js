@@ -1,3 +1,5 @@
+ import { getUsername, getHex } from "./config.js"; 
+
 const c = document.getElementById("myCanvas");
 const ctx = c.getContext("2d");
 
@@ -31,12 +33,12 @@ document.addEventListener('keydown', function(event) {
 
 function draw() {
     ctx.clearRect(0, 0, c.width, c.height);
-    ctx.fillStyle = "blue";
+    ctx.fillStyle = getHex();
     ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
     ctx.fillStyle = "black";
     ctx.font = "20px Courier New";
     ctx.textAlign = "center";
-    ctx.fillText("smoky", rect.x + rect.width / 2, rect.y + 70);
+    ctx.fillText(getUsername(), rect.x + rect.width / 2, rect.y + 70);
 }
 
 draw();
