@@ -22,6 +22,6 @@ app.get('/user/login', (req, res) => {
 const usersRouter = require('./routes/users')
 app.use('/user', usersRouter)
 
-app.listen(port, () => {
+app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
