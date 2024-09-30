@@ -3,9 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chatroom</title>
+    <title>Movement Project</title>
+    <style src="style.css">
+
+        body {
+            overflow-y: hidden;
+            overflow-x: hidden;
+        }
+
+        #MyModal {
+            visibility: hidden;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: white;
+            border-top: 2px solid black;
+            box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        #MyModal > *{
+            padding: 0.5vw;
+        }
+
+        #message {
+            font-family: "Lucida Console", "Courier New", monospace;
+            border: 0;
+            width: 95%;
+        }
+
+        #message:focus {
+            outline: 0;
+            border-radius: 0px;
+        }
+
+        #message:focus-visible {
+            border: 0px;
+        }
+
+        #chatBtn{
+            border: 0;
+            visibility: hidden;
+        }
+
+
+    </style>
+    <script src="./scripts/input.js"></script>
 </head>
 <body>
-    WIP
+    <canvas id="myCanvas" width="1920" height="1080">  </canvas>
+
+
+    <div id="MyModal" class="modal">
+        <div class="modal-content">
+            <form id="chatForm">
+                <input type="text" id="message" name="message" placeholder="Write a message...." required>
+                <input type="submit" id="chatBtn">
+            </form>
+          </div>
+    </div>
+
+    <script src="./scripts/player.js"></script>
 </body>
 </html>
