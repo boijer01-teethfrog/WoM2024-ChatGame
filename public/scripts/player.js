@@ -1,12 +1,12 @@
-var c = document.getElementById("myCanvas");
-var ctx = c.getContext("2d");
+const c = document.getElementById("myCanvas");
+const ctx = c.getContext("2d");
 
-var x = 100;
-var y = 60;
-var width = 50;
-var height = 50;
-var speed = 5;
-var rect = {
+const x = 100;
+const y = 60;
+const width = 50;
+const height = 50;
+const speed = 8;
+const rect = {
     id: 'smoky',
     x: 100,
     y: 60,
