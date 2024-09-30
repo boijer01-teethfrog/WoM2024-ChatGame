@@ -1,40 +1,40 @@
-const API_URL = "http://localhost:80";
+import { LOGIN_URL, ROOM_URL } from "./config.js";
 
-async function register(user, pass) {
-    console.log(user, pass);
 
-    const response = await fetch(`${API_URL}/user/login`, {
+
+async function register(respData, pass) {
+    const response = await fetch(LOGIN_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-            "name": user,
+            "name": respData,
             "password": pass
         })         
     });
 
-    respData = await response.json();
-    console.log(respData);
+    const data = await response.json();
+    console.log(data);
 
-    if (respData.success == true) {
-        alert("You are logged in!")
-        localStorage.setItem('username', user.username);
-        localStorage.setItem('hex', user.hex);
-        localStorage.setItem('role', user.role);
+    if (data.success == true) {
+        alert("You are logged in!");
+
+        // Save user data in localStorage
+        localStorage.setItem('username', data.username);
+        localStorage.setItem('hex', data.hex);
+        localStorage.setItem('role', data.role);
         localStorage.setItem('isLoggedIn', 'true');
-        window.location.href = "./room";
+        localStorage.setItem('jwt', data.jwt);  // Save the JWT for future requests
+        window.location.href = ROOM_URL;
     } else {
-        console.error("Login failed:", respData.msg);
+        console.error("Login failed:", data.msg);
     }
 }
 
 document.querySelector('#btn-signin').addEventListener('click', () => {
-    event.preventDefault()
+    event.preventDefault();
 
     const user = document.querySelector('#username').value;
     const pass = document.querySelector('#password').value;
 
     register(user, pass);
-    
-
-
 });

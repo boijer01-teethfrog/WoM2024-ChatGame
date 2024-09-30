@@ -30,6 +30,10 @@ app.get('/room', (req, res) => {
 const usersRouter = require('./routes/users')
 app.use('/user', usersRouter)
 
+app.get('/api/config', (req, res) => {
+  res.json({ apiUrl, port });
+});
+
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
