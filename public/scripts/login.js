@@ -1,7 +1,5 @@
 import { LOGIN_URL, ROOM_URL } from "./config.js";
 
-
-
 async function register(respData, pass) {
     const response = await fetch(LOGIN_URL, {
         method: "POST",
