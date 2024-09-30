@@ -9,7 +9,8 @@
   "scripts": {
     "test": "echo \"No tests specified\" && exit 0",
     "start": "npx prisma generate && node src/server.js",
-    "dev": "npx prisma generate && nodemon -L src/server.js"
+    "dev": "npx prisma generate && nodemon -L src/server.js",
+    "postinstall": "npx prisma generate" 
   },
   "author": "",
   "license": "ISC",
