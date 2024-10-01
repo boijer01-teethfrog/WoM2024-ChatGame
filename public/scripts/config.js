@@ -12,3 +12,10 @@ export function getUsername() {
 export function getHex() {
     return '#' + localStorage.getItem('hex') || "blue";
 }
+
+export function getWindow() {
+  return {
+    width: window.innerWidth,
+    height: window.innerHeight
+  };
+}
