@@ -8,8 +8,8 @@ const maxSizeY = getWindow().height - 20;*/
 
 const rect = {
     id: getUsername(),
-    x: 100,
-    y: 60,
+    x: 100 + Math.floor(Math.random() * 1401),
+    y: 60 + Math.floor(Math.random() * 601),
     width: 50,
     height: 50,
     speed: 10
