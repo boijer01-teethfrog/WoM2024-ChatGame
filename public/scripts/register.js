@@ -1,33 +1,34 @@
-import { LOGIN_URL, REGISTER_URL } from './config.js';
+import { LOGIN_URL, REGISTER_URL } from "./config.js";
 
 async function register(user, pass) {
-    console.log(user, pass);
-
+  try {
     const response = await fetch(REGISTER_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-            "name": user,
-            "password": pass
-        })         
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ name: user, password: pass }),
     });
 
     const respData = await response.json();
-    console.log(respData);
 
-    if (respData.success == true) {
-        alert("Account successfully created, redirecting to login")
-        window.location.href = LOGIN_URL
+    if (response.ok && respData.success) {
+      alert("Account successfully created! Redirecting to login...");
+      window.location.href = LOGIN_URL;
     } else {
-        console.error("Registration failed:", respData.msg);
+      alert(`Registration failed: ${respData.msg}`);
     }
+  } catch (error) {
+    alert("Error, pls try again :s");
+  }
 }
 
-document.querySelector('#btn-signup').addEventListener('click', () => {
-    event.preventDefault()
+document.querySelector("#btn-signup").addEventListener("click", (event) => {
+  event.preventDefault();
+  const user = document.querySelector("#username").value.trim();
+  const pass = document.querySelector("#password").value.trim();
 
-    const user = document.querySelector('#username').value;
-    const pass = document.querySelector('#password').value;
-
+  if (user && pass) {
     register(user, pass);
+  } else {
+    alert("Please enter both username and password.");
+  }
 });
