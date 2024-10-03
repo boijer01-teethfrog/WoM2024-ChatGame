@@ -1,3 +1,5 @@
+import {handleCommand} from './inputCommands.js';
+
 function showModal() {
     const modal = document.getElementById('MyModal');
     if (modal) {
@@ -32,6 +34,12 @@ function handleSubmit(e) {
     if (!rectData) {
         console.error('rectData not found in localStorage');
         return;
+    }
+
+    if (message.startsWith('/')) {
+        const command = message.slice(0);
+        console.log(command);
+        handleCommand(command);
     }
 
     handleMessageDisplay(rectData, message, modal);
