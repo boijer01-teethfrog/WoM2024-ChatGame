@@ -1,3 +1,5 @@
+import { changePlayerSize } from './player.js';
+
 /* Chat commands */
 
 /* Play music */
@@ -9,6 +11,7 @@ export function handleCommand(command) {
     switch (command) {
         case '/play taivas':
             console.log('Playing music...');
+            audio.volume = 0.5;
             audio.play();
             break;
         case '/stop':
@@ -19,6 +22,15 @@ export function handleCommand(command) {
             } else {
                 console.log('Nothing is playing...');
             }
+            break;
+        case '/huge':
+            changePlayerSize(150, 150);
+            break;
+        case '/normal':
+            changePlayerSize(50, 50);
+            break;
+        case '/small':
+            changePlayerSize(15, 15);
             break;
         default:
             console.log('Unknown command');

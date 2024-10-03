@@ -15,6 +15,12 @@ const localPlayer = {
     speed: 10
 };
 
+export function changePlayerSize(w, h) {
+    localPlayer.width = w;
+    localPlayer.height = h;
+    draw();
+}
+
 const otherPlayers = {};
 
 //funktion för rita spelarna
