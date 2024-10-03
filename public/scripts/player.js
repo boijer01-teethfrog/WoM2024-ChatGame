@@ -1,5 +1,5 @@
 import { getUsername, getHex, getWindow } from "./config.js";
-/* import { serverController } from "./serverController.js;"  */
+import { sendMovement, getServerResponse } from "./serverController.js";
 
 const c = document.getElementById("myCanvas");
 const ctx = c.getContext("2d");
@@ -15,42 +15,32 @@ const rect = {
     speed: 10
 };
 
-/* document.addEventListener('keydown', function (event) {
-    if (event.key === 'ArrowUp') {
-        rect.y -= rect.speed;
-        serverController.sendMovement(rect.y, "y");
-            } else if (event.key === 'ArrowLeft') {
-                rect.x -= rect.speed;
-                serverController.sendMovement(rect.x, "x");
-            } else if (event.key === 'ArrowDown') {
-                rect.y += rect.speed;
-                serverController.sendMovement(rect.y, "y");
-            } else if (event.key === 'ArrowRight') {
-                rect.x += rect.speed;
-                serverController.sendMovement(rect.x, "x");
-            }
-}); */
-
 document.addEventListener('keydown', function (event) {
-    switch(event.key) {
+    switch (event.key) {
         case 'ArrowUp':
             rect.y -= rect.speed;
-               /*  serverController.sendMovement(rect.y, "y");  */
+            sendMovement(rect.y, "y");
+            getServerResponse();
             break;
         case 'ArrowDown':
             rect.y += rect.speed;
-         /*    serverController.sendMovement(rect.y, "y"); */
+            sendMovement(rect.y, "y");
+            getServerResponse();
+
             break;
         case 'ArrowLeft':
             rect.x -= rect.speed;
-          /*   serverController.sendMovement(rect.x, "x"); */
-          break;
+            sendMovement(rect.x, "x");
+            getServerResponse();
+
+            break;
         case 'ArrowRight':
             rect.x += rect.speed;
-         /*    serverController.sendMovement(rect.x, "x"); */
-         break;
-    }
+            sendMovement(rect.x, "x");
+            getServerResponse();
 
+            break;
+    }
     draw();
     localStorage.setItem('rectData', JSON.stringify({ id: rect.id, x: rect.x, y: rect.y }));
 });
@@ -66,3 +56,10 @@ function draw() {
 }
 
 draw();
+
+const WS_TOKEN = localStorage.getItem('ws_token') || 'my-secret-token';
+const socket = new WebSocket(`ws://localhost:5000?token=${WS_TOKEN}`);
+
+socket.onmessage = (event) => {
+    console.log(event.data);
+};
