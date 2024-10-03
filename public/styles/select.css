@@ -1,0 +1,59 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Lucida Console", "Courier New", monospace;
+}
+
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    background-color: #ffffff;
+}
+
+main {
+    margin-top: 5vh;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 40px;
+    width: 20em;
+}
+
+main > * {
+    padding: 2vh;
+}
+
+#join-room {
+    padding-top: 0.5em;
+}
+
+#room-code {
+    width: 100%;
+    padding: 10px;
+    margin: 3px 0;
+    border: 1px solid #ccc;
+
+}
+
+#join-room-button {
+    float: right;
+    width: 50%;
+    padding: 5px;
+    margin-top: 5px;
+    border: none;
+    background-color: #333;
+    color: white;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+
+
+#join-room-button:hover {
+    background-color: #555;
+}

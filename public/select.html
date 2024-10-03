@@ -1,0 +1,40 @@
+<!-- TODO
+ 
+    Show account name, color.
+        Get info from localstorage
+    Allow changing color.
+        Add changing color functionality to users.js
+    Join room.
+        Input that takes in room code in numbers. Button that sends you to room/:id.
+
+-->
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select Room</title>
+    <link rel="stylesheet" href="./styles/select.css">
+</head>
+<body>
+    <header>
+        <h1 id="greetingText">Welcome user!</h1>
+    </header>
+    <main>
+        <section id="account-info">
+            <p id="account-name">Name: Guest<span></span></p>
+            <p id="account-color">Color: <span id="color-box" style="display: inline-block; vertical-align: bottom; width: 20px; height: 20px; background-color: #000000;"></span></p>
+            <label for="color-picker">Change Color:</label>
+            <input type="color" id="color-picker">
+        </section>
+        <section id="join-room">
+            <h2>Join a Room</h2>
+            <label for="room-code">Room Code:</label>
+            <input type="number" id="room-code" min="0">
+            <button id="join-room-button">Join Room</button>
+        </section>
+    </main>
+    <script type="module" src="./scripts/select.js"></script>
+</body>
+</html>
