@@ -27,6 +27,10 @@ app.get('/room', (req, res) => {
   res.sendFile(path.join(__dirname, '../public/room.html'));
 });
 
+app.get('/testroom', (req, res) => {
+  res.sendFile(path.join(__dirname, '../public/test-room.html'));
+});
+
 const usersRouter = require('./routes/users')
 app.use('/user', usersRouter)
 

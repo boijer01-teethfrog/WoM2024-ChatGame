@@ -1,11 +1,10 @@
- import { getUsername, getHex, getWindow } from "./config.js"; 
+import { getUsername, getHex, getWindow } from "./config.js";
 
 const c = document.getElementById("myCanvas");
 const ctx = c.getContext("2d");
 
-/*const maxSizeX = getWindow().width - 20;
-const maxSizeY = getWindow().height - 20;*/
 
+//Player logic
 const rect = {
     id: getUsername(),
     x: 100 + Math.floor(Math.random() * 1401),
@@ -15,19 +14,20 @@ const rect = {
     speed: 10
 };
 
-document.addEventListener('keydown', function(event) {
-    if(event.key === 'ArrowUp') {
-            rect.y -= rect.speed;
-            } else if(event.key === 'ArrowLeft') {
-            rect.x -= rect.speed;
-            } else if(event.key === 'ArrowDown') {
-            rect.y += rect.speed;
-            } else if(event.key === 'ArrowRight') {
-            rect.x += rect.speed;
-            }
-            draw();
-            localStorage.setItem('rectData', JSON.stringify({ id: rect.id, x: rect.x, y: rect.y }));
-    });
+document.addEventListener('keydown', function (event) {
+    if (event.key === 'ArrowUp') {
+        rect.y -= rect.speed;
+    } else if (event.key === 'ArrowLeft') {
+        rect.x -= rect.speed;
+    } else if (event.key === 'ArrowDown') {
+        rect.y += rect.speed;
+    } else if (event.key === 'ArrowRight') {
+        rect.x += rect.speed;
+
+    }
+    draw();
+    localStorage.setItem('rectData', JSON.stringify({ id: rect.id, x: rect.x, y: rect.y }));
+});
 
 function draw() {
     ctx.clearRect(0, 0, c.width, c.height);
