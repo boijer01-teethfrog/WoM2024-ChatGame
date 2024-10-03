@@ -28,6 +28,10 @@ main > * {
     padding: 2vh;
 }
 
+main > #account-info > * {
+    margin-bottom: 5px;
+}
+
 #join-room {
     padding-top: 0.5em;
 }
@@ -42,7 +46,7 @@ main > * {
 
 #join-room-button {
     float: right;
-    width: 50%;
+    width: 35%;
     padding: 5px;
     margin-top: 5px;
     border: none;
@@ -56,4 +60,17 @@ main > * {
 
 #join-room-button:hover {
     background-color: #555;
+}
+
+/* #colorpick-label {
+} */
+
+#color-picker {
+    width: 25px;
+    height: 30px;
+    padding: none;
+    margin: none;
+    border: 0;
+    outline: 0;
+    background-color: white;
 }

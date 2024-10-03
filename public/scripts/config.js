@@ -10,7 +10,7 @@ export function getUsername() {
 }
 
 export function getHex() {
-  return localStorage.getItem('hex') ? `#${localStorage.getItem('hex')}` : "#0000ff";
+  return localStorage.getItem('hex') ? `${localStorage.getItem('hex')}` : "#0000ff";
 }
 
 export function getWindow() {

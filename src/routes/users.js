@@ -24,7 +24,7 @@ router.post("/register", async (req, res) => {
         data: {
           username: req.body.name,
           password: hashedPassword,
-          hex: Math.floor(Math.random() * 16777215).toString(16),
+          hex: "#"+Math.floor(Math.random() * 16777215).toString(16),
         },
       });
 
@@ -78,6 +78,28 @@ router.post("/login", async (req, res) => {
     hex: user.hex,
     role: user.role,
   });
+});
+
+router.patch("/updateColor", async (req, res) => {
+  const username = req.body.name;
+  const newcolor = req.body.hex;
+
+  try {
+    const updatedUser = await prisma.users.update({
+      where: { username },
+      data: { hex: newcolor },
+    });
+
+    res.send({
+      success: true,
+      msg: "Color updated successfully",
+      username: updatedUser.username,
+      hex: updatedUser.hex,
+    });
+  } catch (error) {
+    console.log(error.message);
+    res.status(500).send({ msg: "ERROR" });
+  }
 });
 
 module.exports = router;
