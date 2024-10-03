@@ -37,7 +37,7 @@ function handleSubmit(e) {
     }
 
     if (message.startsWith('/')) {
-        const command = message.slice(0);
+        const command = message;
         console.log(command);
         handleCommand(command);
     }
