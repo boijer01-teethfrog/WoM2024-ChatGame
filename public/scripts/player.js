@@ -1,65 +1,110 @@
 import { getUsername, getHex, getWindow } from "./config.js";
-import { sendMovement, getServerResponse } from "./serverController.js";
+import { sendMovement, initializeWebSocket } from "./serverController.js";
 
 const c = document.getElementById("myCanvas");
 const ctx = c.getContext("2d");
 
-
-//Player logic
-const rect = {
+// Lokala spelarens data
+const localPlayer = {
     id: getUsername(),
     x: 100 + Math.floor(Math.random() * 1401),
     y: 60 + Math.floor(Math.random() * 601),
     width: 50,
     height: 50,
+    color: getHex(),
     speed: 10
 };
 
-document.addEventListener('keydown', function (event) {
-    switch (event.key) {
-        case 'ArrowUp':
-            rect.y -= rect.speed;
-            sendMovement(rect.y, "y");
-            getServerResponse();
-            break;
-        case 'ArrowDown':
-            rect.y += rect.speed;
-            sendMovement(rect.y, "y");
-            getServerResponse();
+const otherPlayers = {};
 
-            break;
-        case 'ArrowLeft':
-            rect.x -= rect.speed;
-            sendMovement(rect.x, "x");
-            getServerResponse();
-
-            break;
-        case 'ArrowRight':
-            rect.x += rect.speed;
-            sendMovement(rect.x, "x");
-            getServerResponse();
-
-            break;
-    }
-    draw();
-    localStorage.setItem('rectData', JSON.stringify({ id: rect.id, x: rect.x, y: rect.y }));
-});
-
+//funktion för rita spelarna
 function draw() {
     ctx.clearRect(0, 0, c.width, c.height);
-    ctx.fillStyle = getHex();
-    ctx.fillRect(rect.x, rect.y, rect.width, rect.height);
+
+    //Ritar lokala playerjn
+    ctx.fillStyle = localPlayer.color;
+    ctx.fillRect(localPlayer.x, localPlayer.y, localPlayer.width, localPlayer.height);
     ctx.fillStyle = "black";
     ctx.font = "20px Courier New";
     ctx.textAlign = "center";
-    ctx.fillText(getUsername(), rect.x + rect.width / 2, rect.y + 70);
+    ctx.fillText(localPlayer.id, localPlayer.x + localPlayer.width / 2, localPlayer.y + 70);
+
+    //Loopar igenom andra spelaren å ritar ut varje spelare
+    for (const id in otherPlayers) {
+        const player = otherPlayers[id];
+        ctx.fillStyle = player.color;
+        ctx.fillRect(player.x, player.y, player.width, player.height);
+        ctx.fillStyle = "black";
+        ctx.fillText(player.id, player.x + player.width / 2, player.y + 70);
+    }
 }
 
+//movement
+document.addEventListener('keydown', function (event) {
+    let moved = false;
+    switch (event.key) {
+        case 'ArrowUp':
+            localPlayer.y -= localPlayer.speed;
+            moved = true;
+            break;
+        case 'ArrowDown':
+            localPlayer.y += localPlayer.speed;
+            moved = true;
+            break;
+        case 'ArrowLeft':
+            localPlayer.x -= localPlayer.speed;
+            moved = true;
+            break;
+        case 'ArrowRight':
+            localPlayer.x += localPlayer.speed;
+            moved = true;
+            break;
+    }
+    //Skickar ut till websocketen movement, färg å id
+    if (moved) {
+        sendMovement(localPlayer.id, localPlayer.x, localPlayer.y, localPlayer.color);
+        localStorage.setItem('rectData', JSON.stringify({ id: localPlayer.id, x: localPlayer.x, y: localPlayer.y }));
+    }
+});
 draw();
 
+
+//websocket stuff
 const WS_TOKEN = localStorage.getItem('ws_token') || 'my-secret-token';
 const socket = new WebSocket(`ws://localhost:5000?token=${WS_TOKEN}`);
 
-socket.onmessage = (event) => {
-    console.log(event.data);
+initializeWebSocket(socket);
+
+socket.onopen = function (event) {
+    console.log("Connected to WebSocket server");
+    sendMovement(localPlayer.id, localPlayer.x, localPlayer.y, localPlayer.color);
 };
+
+socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    const { id, x, y, color, left } = data; //Uppdaterar massa olika vars med data från socket
+
+    if (left) { //radera spelaren om han leava
+        delete otherPlayers[id];
+    } else {
+        if (id !== localPlayer.id) { //om spelaren är annan så lägg till
+            otherPlayers[id] = { id, x, y, color, width: 50, height: 50 };
+        }
+    }
+    draw();
+};
+
+socket.onclose = () => {
+    console.log("Disconnected from WebSocket server");
+};
+
+socket.onerror = (error) => {
+    console.error("Error :(", error);
+};
+
+function gameLoop() {
+    draw();
+    requestAnimationFrame(gameLoop); //makes everything smooth i think
+}
+
+gameLoop();

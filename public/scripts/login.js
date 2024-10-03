@@ -1,4 +1,4 @@
-import { LOGIN_URL, ROOM_URL } from "./config.js";
+import { LOGIN_URL, ROOM_URL, SELECT_URL } from "./config.js";
 
 async function register(respData, pass) {
   try {
