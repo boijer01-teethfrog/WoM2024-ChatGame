@@ -1,6 +1,7 @@
 //urls
 export const REGISTER_URL = `/user/register`;
 export const LOGIN_URL = `/user/login`;
+export const SELECT_URL = `/user/select`;
 export const ROOM_URL = `/room`;
 
 //Getters
@@ -9,7 +10,7 @@ export function getUsername() {
 }
 
 export function getHex() {
-  return localStorage.getItem('hex') ? `#${localStorage.getItem('hex')}` : "blue";
+  return localStorage.getItem('hex') ? `#${localStorage.getItem('hex')}` : "#0000ff";
 }
 
 export function getWindow() {

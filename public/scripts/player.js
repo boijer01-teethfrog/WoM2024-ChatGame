@@ -44,11 +44,11 @@ document.addEventListener('keydown', function (event) {
         case 'ArrowLeft':
             rect.x -= rect.speed;
           /*   serverController.sendMovement(rect.x, "x"); */
-          break;
+            break;
         case 'ArrowRight':
             rect.x += rect.speed;
          /*    serverController.sendMovement(rect.x, "x"); */
-         break;
+            break;
     }
 
     draw();
