@@ -1,4 +1,5 @@
 import { getUsername, getHex, getWindow } from "./config.js";
+/* import { serverController } from "./serverController.js;"  */
 
 const c = document.getElementById("myCanvas");
 const ctx = c.getContext("2d");
@@ -14,17 +15,42 @@ const rect = {
     speed: 10
 };
 
-document.addEventListener('keydown', function (event) {
+/* document.addEventListener('keydown', function (event) {
     if (event.key === 'ArrowUp') {
         rect.y -= rect.speed;
-    } else if (event.key === 'ArrowLeft') {
-        rect.x -= rect.speed;
-    } else if (event.key === 'ArrowDown') {
-        rect.y += rect.speed;
-    } else if (event.key === 'ArrowRight') {
-        rect.x += rect.speed;
+        serverController.sendMovement(rect.y, "y");
+            } else if (event.key === 'ArrowLeft') {
+                rect.x -= rect.speed;
+                serverController.sendMovement(rect.x, "x");
+            } else if (event.key === 'ArrowDown') {
+                rect.y += rect.speed;
+                serverController.sendMovement(rect.y, "y");
+            } else if (event.key === 'ArrowRight') {
+                rect.x += rect.speed;
+                serverController.sendMovement(rect.x, "x");
+            }
+}); */
 
+document.addEventListener('keydown', function (event) {
+    switch(event.key) {
+        case 'ArrowUp':
+            rect.y -= rect.speed;
+               /*  serverController.sendMovement(rect.y, "y");  */
+            break;
+        case 'ArrowDown':
+            rect.y += rect.speed;
+         /*    serverController.sendMovement(rect.y, "y"); */
+            break;
+        case 'ArrowLeft':
+            rect.x -= rect.speed;
+          /*   serverController.sendMovement(rect.x, "x"); */
+          break;
+        case 'ArrowRight':
+            rect.x += rect.speed;
+         /*    serverController.sendMovement(rect.x, "x"); */
+         break;
     }
+
     draw();
     localStorage.setItem('rectData', JSON.stringify({ id: rect.id, x: rect.x, y: rect.y }));
 });
