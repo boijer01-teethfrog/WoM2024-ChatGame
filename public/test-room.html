@@ -20,7 +20,7 @@
         console.log(WS_TOKEN);
 
         // Create a WebSocket connection
-        const socket = new WebSocket(`ws://localhost:5000?token=${WS_TOKEN}`);
+        const socket = new WebSocket(`wss://localhost:5000?token=${WS_TOKEN}`);
 
         // Connection established 
         socket.onopen = function (event) {
