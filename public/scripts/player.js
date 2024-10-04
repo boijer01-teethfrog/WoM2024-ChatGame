@@ -77,7 +77,7 @@ draw();
 
 //websocket stuff
 const WS_TOKEN = localStorage.getItem('ws_token') || 'my-secret-token';
-const socket = new WebSocket(`ws://localhost:5000?token=${WS_TOKEN}`);
+const socket = new WebSocket(`ws://wom-websocket.azurewebsites.net=${WS_TOKEN}`);
 
 initializeWebSocket(socket);
 
