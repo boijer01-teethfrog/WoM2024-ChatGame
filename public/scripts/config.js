@@ -3,6 +3,7 @@ export const REGISTER_URL = `/user/register`;
 export const LOGIN_URL = `/user/login`;
 export const SELECT_URL = `/select`;
 export const ROOM_URL = `/room`;
+export const APPNAME = `Pixels`;
 
 //Getters
 export function getUsername() {
