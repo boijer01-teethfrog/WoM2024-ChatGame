@@ -2,6 +2,7 @@
 body {
     overflow-y: hidden;
     overflow-x: hidden;
+    
 }
 
 #MyModal {
@@ -39,3 +40,43 @@ body {
     visibility: hidden;
 }
 
+
+header {
+    position: fixed;
+    top: 10;
+    left: 10;
+    width: 100%;
+    z-index: 1000;
+
+}
+
+header button {
+    float: right;
+    margin: 0 auto;
+    height: 30px;
+    max-width: 1200px;
+    padding: 0 0.5vw;
+    background-color: transparent;
+    border: none;
+}
+
+#logoutButton {
+    margin-right: 1vw;
+}
+
+header button:hover {
+    cursor:pointer;
+}
+
+header img {
+    height: 80%;
+    vertical-align: middle;
+    transform: scaleX(-1);
+}
+
+[data-tooltip]:hover::after {
+    display: block;
+    content: attr(data-tooltip);
+    background: transparent;
+    font-family: "Lucida Console", "Courier New", monospace;
+  }
