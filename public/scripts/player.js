@@ -68,8 +68,8 @@ document.addEventListener('keydown', function (event) {
     }
     //Skickar ut till websocketen movement, färg å id
     if (moved) {
-        sendMovement(localPlayer.id, localPlayer.x, localPlayer.y, localPlayer.color);
-        localStorage.setItem('rectData', JSON.stringify({ id: localPlayer.id, x: localPlayer.x, y: localPlayer.y }));
+        sendMovement(localPlayer.id, localPlayer.x, localPlayer.y, localPlayer.color, localPlayer.width, localPlayer.height);
+        localStorage.setItem('rectData', JSON.stringify({ id: localPlayer.id, x: localPlayer.x, y: localPlayer.y, width: localPlayer.width, height: localPlayer.height }));
     }
 });
 draw();
