@@ -1,4 +1,4 @@
-import { LOGIN_URL, ROOM_URL, SELECT_URL } from "./config.js";
+import { LOGIN_URL, SELECT_URL } from "./config.js";
 
 async function register(respData, pass) {
   try {
@@ -41,7 +41,7 @@ async function register(respData, pass) {
 document.querySelector("#btn-signin").addEventListener("click", (event) => {
   event.preventDefault();
 
-  const user = document.querySelector("#username").value.trim(); //trimmar bort extra space om man gjort i misstag
+  const user = document.querySelector("#username").value.trim(); //trimmar bort extra space om man haft spacing i misstag
   const pass = document.querySelector("#password").value.trim();
 
   //extra kontroll

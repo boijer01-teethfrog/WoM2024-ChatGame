@@ -76,8 +76,14 @@ draw();
 
 
 //websocket stuff
+
+/*
+TODO
+Riktigt api key, lägga i localstorage från .env filen istället
+*/
 const WS_TOKEN = localStorage.getItem('ws_token') || 'my-secret-token';
-const socket = new WebSocket(`wss://wom-websocket.azurewebsites.net=${WS_TOKEN}`);
+const socket = new WebSocket(`wss://wom-websocket.azurewebsites.net/?token=${WS_TOKEN}`);
+
 
 initializeWebSocket(socket);
 
