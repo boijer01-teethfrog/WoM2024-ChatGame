@@ -4,6 +4,7 @@ export const LOGIN_URL = `/user/login`;
 export const SELECT_URL = `/select`;
 export const ROOM_URL = `/room`;
 export const APPNAME = `Pixels`;
+export const SOCKET_URL = `wss://wom-websocket.azurewebsites.net/?token=`
 
 //Getters
 export function getUsername() {

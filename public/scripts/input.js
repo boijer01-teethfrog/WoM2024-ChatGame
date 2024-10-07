@@ -1,4 +1,4 @@
-import {handleCommand} from './inputCommands.js';
+import { handleCommand } from './inputCommands.js';
 
 function showModal() {
     const modal = document.getElementById('MyModal');
@@ -24,7 +24,7 @@ function handleKeyDown(event) {
 }
 
 function handleSubmit(e) {
-    e.preventDefault(); 
+    e.preventDefault();
     const modal = document.getElementById('MyModal');
     const formData = new FormData(document.querySelector('form'));
     const message = formData.get('message');
@@ -42,6 +42,7 @@ function handleSubmit(e) {
         handleCommand(command);
     }
 
+    sendChatMessage(rectData.id, message);
     handleMessageDisplay(rectData, message, modal);
 }
 
@@ -105,3 +106,36 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 setInterval(updateMessagePosition, 1);
+
+//websocket stufff
+const WS_TOKEN = localStorage.getItem('ws_token') || 'my-secret-token';
+const socket = new WebSocket(`wss://wom-websocket.azurewebsites.net/?token=${WS_TOKEN}`);
+
+socket.onopen = function () {
+    console.log("Connected to WebSocket server for chat");
+};
+
+socket.onerror = (error) => {
+    console.error("WebSocket error:", error);
+};
+
+socket.onmessage = (event) => {
+    const data = JSON.parse(event.data);
+    if (data.type === 'chat') {
+        const { id, chatMessage } = data;
+
+        const rectData = JSON.parse(localStorage.getItem('rectData')) || {};
+        if (rectData && rectData.id === id) {
+            handleMessageDisplay(rectData, chatMessage, document.getElementById('MyModal'));
+        }
+    }
+};
+
+function sendChatMessage(id, message) {
+    const payload = JSON.stringify({
+        type: 'chat',
+        id: id,
+        chatMessage: message
+    });
+    socket.send(payload);
+}

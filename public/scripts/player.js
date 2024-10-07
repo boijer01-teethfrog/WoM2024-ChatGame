@@ -1,10 +1,11 @@
-import { getUsername, getHex, getWindow } from "./config.js";
+import { getUsername, getHex } from "./config.js";
 import { sendMovement, initializeWebSocket } from "./serverController.js";
 
 const c = document.getElementById("myCanvas");
 const ctx = c.getContext("2d");
+const otherPlayers = {};
+const chatMessages = {};  
 
-// Lokala spelarens data
 const localPlayer = {
     id: getUsername(),
     x: 100 + Math.floor(Math.random() * 1401),
@@ -15,19 +16,9 @@ const localPlayer = {
     speed: 10
 };
 
-export function changePlayerSize(w, h) {
-    localPlayer.width = w;
-    localPlayer.height = h;
-    draw();
-}
-
-const otherPlayers = {};
-
-//funktion för rita spelarna
 function draw() {
     ctx.clearRect(0, 0, c.width, c.height);
 
-    //Ritar lokala playerjn
     ctx.fillStyle = localPlayer.color;
     ctx.fillRect(localPlayer.x, localPlayer.y, localPlayer.width, localPlayer.height);
     ctx.fillStyle = "black";
@@ -35,7 +26,6 @@ function draw() {
     ctx.textAlign = "center";
     ctx.fillText(localPlayer.id, localPlayer.x + localPlayer.width / 2, localPlayer.y + 70);
 
-    //Loopar igenom andra spelaren å ritar ut varje spelare
     for (const id in otherPlayers) {
         const player = otherPlayers[id];
         ctx.fillStyle = player.color;
@@ -43,9 +33,24 @@ function draw() {
         ctx.fillStyle = "black";
         ctx.fillText(player.id, player.x + player.width / 2, player.y + 70);
     }
+
+    for (const id in chatMessages) {
+        const messageData = chatMessages[id];
+        if (messageData) {
+            ctx.fillStyle = "white";
+            ctx.fillRect(messageData.x, messageData.y - 30, 100, 20); 
+            ctx.fillStyle = "black";
+            ctx.fillText(messageData.message, messageData.x + 50, messageData.y - 15);
+        }
+    }
 }
 
-//movement
+export function changePlayerSize(w, h) {
+    localPlayer.width = w;
+    localPlayer.height = h;
+    draw();
+}
+
 document.addEventListener('keydown', function (event) {
     let moved = false;
     switch (event.key) {
@@ -66,7 +71,7 @@ document.addEventListener('keydown', function (event) {
             moved = true;
             break;
     }
-    //Skickar ut till websocketen movement, färg å id
+
     if (moved) {
         sendMovement(localPlayer.id, localPlayer.x, localPlayer.y, localPlayer.color);
         localStorage.setItem('rectData', JSON.stringify({ id: localPlayer.id, x: localPlayer.x, y: localPlayer.y }));
@@ -74,35 +79,44 @@ document.addEventListener('keydown', function (event) {
 });
 draw();
 
-
-//websocket stuff
-
-/*
-TODO
-Riktigt api key, lägga i localstorage från .env filen istället
-*/
+//WebSocket stuff
 const WS_TOKEN = localStorage.getItem('ws_token') || 'my-secret-token';
 const socket = new WebSocket(`wss://wom-websocket.azurewebsites.net/?token=${WS_TOKEN}`);
 
 initializeWebSocket(socket);
 
-socket.onopen = function (event) {
+socket.onopen = function () {
     console.log("Connected to WebSocket server");
-    sendMovement(localPlayer.id, localPlayer.x, localPlayer.y, localPlayer.color);
+    sendMovement(localPlayer.id, localPlayer.x, localPlayer.y, localPlayer.color); 
 };
 
 socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    const { id, x, y, color, left } = data; //Uppdaterar massa olika vars med data från socket
 
-    if (left) { //radera spelaren om han leava
-        delete otherPlayers[id];
-    } else {
-        if (id !== localPlayer.id) { //om spelaren är annan så lägg till
-            otherPlayers[id] = { id, x, y, color, width: 50, height: 50 };
+    if (data.type === 'move') {
+        const { id, x, y, color, left } = data;
+        if (left) {
+            delete otherPlayers[id];
+        } else {
+            if (id !== localPlayer.id) {
+                otherPlayers[id] = { id, x, y, color, width: 50, height: 50 };
+            }
         }
     }
-    draw();
+
+    else if (data.type === 'chat') {
+        const { id, message } = data;
+        const player = otherPlayers[id] || localPlayer;
+
+        chatMessages[id] = { x: player.x, y: player.y, message: message };
+
+        setTimeout(() => {
+            delete chatMessages[id];
+            draw();
+        }, 5000);
+    }
+
+    draw();  
 };
 
 socket.onclose = () => {
@@ -113,9 +127,11 @@ socket.onerror = (error) => {
     console.error("Error :(", error);
 };
 
+
+//game loop
 function gameLoop() {
     draw();
-    requestAnimationFrame(gameLoop); //makes everything smooth i think
+    requestAnimationFrame(gameLoop); //updates 60hz i think
 }
 
 gameLoop();
