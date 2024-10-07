@@ -88,7 +88,7 @@ socket.onopen = function (event) {
 
 socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
-    const { id, x, y, color, left } = data; //Uppdaterar massa olika vars med data från socket
+    const { id, x, y, color, left, width, height } = data; //Uppdaterar massa olika vars med data från socket
 
     if (left) { //radera spelaren om han leava
         delete otherPlayers[id];
