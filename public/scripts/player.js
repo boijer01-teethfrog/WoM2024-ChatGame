@@ -77,13 +77,13 @@ draw();
 
 //websocket stuff
 const WS_TOKEN = localStorage.getItem('ws_token') || 'my-secret-token';
-const socket = new WebSocket(`wss://wom-websocket.azurewebsites.net=${WS_TOKEN}`);
+const socket = new WebSocket(`wss://wom-websocket.azurewebsites.net/?token=${WS_TOKEN}`);
 
 initializeWebSocket(socket);
 
 socket.onopen = function (event) {
     console.log("Connected to WebSocket server");
-    sendMovement(localPlayer.id, localPlayer.x, localPlayer.y, localPlayer.color);
+    sendMovement(localPlayer.id, localPlayer.x, localPlayer.y, localPlayer.color, localPlayer.width, localPlayer.height);
 };
 
 socket.onmessage = (event) => {
@@ -94,7 +94,7 @@ socket.onmessage = (event) => {
         delete otherPlayers[id];
     } else {
         if (id !== localPlayer.id) { //om spelaren är annan så lägg till
-            otherPlayers[id] = { id, x, y, color, width: 50, height: 50 };
+            otherPlayers[id] = { id, x, y, color, width: width, height: height };
         }
     }
     draw();
