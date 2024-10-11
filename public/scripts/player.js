@@ -37,10 +37,25 @@ function draw() {
     for (const id in chatMessages) {
         const messageData = chatMessages[id];
         if (messageData) {
-            ctx.fillStyle = "white";
-            ctx.fillRect(messageData.x, messageData.y - 30, 100, 20); 
+            const textWidth = ctx.measureText(messageData.message).width;
+            const bubblePadding = 10;
+            const bubbleWidth = textWidth + bubblePadding * 2;
+            const bubbleHeight = 30;
+
+            ctx.fillStyle = "#d6d6d6"; 
+            ctx.fillRect(
+                messageData.x - bubbleWidth / 2, 
+                messageData.y - bubbleHeight - 40, 
+                bubbleWidth,
+                bubbleHeight
+            );
+
             ctx.fillStyle = "black";
-            ctx.fillText(messageData.message, messageData.x + 50, messageData.y - 15);
+            ctx.fillText(
+                messageData.message,
+                messageData.x,
+                messageData.y - bubbleHeight - 20 
+            )
         }
     }
 }
@@ -75,9 +90,15 @@ document.addEventListener('keydown', function (event) {
     if (moved) {
         sendMovement(localPlayer.id, localPlayer.x, localPlayer.y, localPlayer.color);
         localStorage.setItem('rectData', JSON.stringify({ id: localPlayer.id, x: localPlayer.x, y: localPlayer.y }));
+        
+        if (chatMessages[localPlayer.id]) {
+            chatMessages[localPlayer.id].x = localPlayer.x;
+            chatMessages[localPlayer.id].y = localPlayer.y;
+        }
+        
+        draw();
     }
 });
-draw();
 
 //WebSocket stuff
 const WS_TOKEN = localStorage.getItem('ws_token') || 'my-secret-token';
@@ -89,7 +110,6 @@ socket.onopen = function () {
     console.log("Connected to WebSocket server");
     sendMovement(localPlayer.id, localPlayer.x, localPlayer.y, localPlayer.color); 
 };
-
 socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
 
@@ -100,6 +120,11 @@ socket.onmessage = (event) => {
         } else {
             if (id !== localPlayer.id) {
                 otherPlayers[id] = { id, x, y, color, width: 50, height: 50 };
+            }
+
+            if (chatMessages[id]) {
+                chatMessages[id].x = x;
+                chatMessages[id].y = y;
             }
         }
     }
@@ -116,8 +141,9 @@ socket.onmessage = (event) => {
         }, 5000);
     }
 
-    draw();  
+    draw();
 };
+
 
 socket.onclose = () => {
     console.log("Disconnected from WebSocket server");

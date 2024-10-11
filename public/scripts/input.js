@@ -65,26 +65,6 @@ function handleMessageDisplay(rectData, message, modal) {
     modal.style.visibility = 'hidden';
 }
 
-function createMessageElement(message, rectData) {
-    const messageElement = document.createElement('div');
-    messageElement.textContent = message;
-    messageElement.style.position = 'absolute';
-    messageElement.style.left = `${rectData.x + 8}px`;
-    messageElement.style.top = `${rectData.y - 30}px`;
-    messageElement.style.backgroundColor = "#d6d6d6";
-    messageElement.style.padding = '5px';
-    messageElement.style.fontFamily = "Courier New, monospace";
-    return messageElement;
-}
-
-function hideMessage(messageElement) {
-    messageElement.style.transition = 'opacity 1s';
-    messageElement.style.opacity = '0';
-    setTimeout(() => {
-        messageElement.remove();
-    }, 500);
-}
-
 function updateMessagePosition() {
     const rectData = JSON.parse(localStorage.getItem('rectData'));
     if (rectData) {
@@ -97,6 +77,9 @@ function updateMessagePosition() {
         console.log('rectData not found in localStorage');
     }
 }
+
+setInterval(updateMessagePosition, 1);
+
 
 document.addEventListener('keydown', handleKeyDown);
 
