@@ -4,9 +4,9 @@ export function initializeWebSocket(ws) {
     socket = ws;
 }
 
-// Skickar movement till servern
+// Sends movement to the server
 export function sendMovement(id, x, y, color) {
-    const roomId = localStorage.getItem('roomId'); // Hämta roomId från localStorage
+    const roomId = localStorage.getItem('roomId'); // Get roomId from localStorage
     if (!roomId) {
         console.error("Room ID är inte definierat.");
         return;
@@ -28,17 +28,22 @@ export function sendMovement(id, x, y, color) {
     }
 }
 
-// Skickar chatt till servern
-export function sendChat(message) {
-    const roomId = localStorage.getItem('roomId'); // Hämta roomId från localStorage
+export function sendChat(chatMessage) { 
+    const roomId = localStorage.getItem('roomId'); 
     if (!roomId) {
         console.error("Room ID är inte definierat.");
+        return;
+    }
+
+    if (!localPlayer || !localPlayer.id) {
+        console.error("Local player ID is not defined.");
         return;
     }
 
     const payload = JSON.stringify({
         type: 'chat',
         id: localPlayer.id, 
+        message: chatMessage, 
         roomId: roomId
     });
 

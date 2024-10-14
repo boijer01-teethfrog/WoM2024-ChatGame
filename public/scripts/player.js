@@ -102,7 +102,8 @@ document.addEventListener('keydown', function (event) {
 
 //WebSocket stuff
 const WS_TOKEN = localStorage.getItem('ws_token') || 'my-secret-token';
-const socket = new WebSocket(`wss://wom-websocket.azurewebsites.net/?token=${WS_TOKEN}`);
+const roomId = localStorage.getItem('roomId');
+const socket = new WebSocket(`ws://localhost:5000?token=${WS_TOKEN}&roomId=${roomId}`);
 
 initializeWebSocket(socket);
 
