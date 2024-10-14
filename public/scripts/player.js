@@ -63,6 +63,7 @@ function draw() {
 export function changePlayerSize(w, h) {
     localPlayer.width = w;
     localPlayer.height = h;
+    sendMovement(localPlayer.id, localPlayer.x, localPlayer.y, localPlayer.width, localPlayer.height, localPlayer.color);
     draw();
 }
 
@@ -88,8 +89,8 @@ document.addEventListener('keydown', function (event) {
     }
 
     if (moved) {
-        sendMovement(localPlayer.id, localPlayer.x, localPlayer.y, localPlayer.color);
-        localStorage.setItem('rectData', JSON.stringify({ id: localPlayer.id, x: localPlayer.x, y: localPlayer.y }));
+        sendMovement(localPlayer.id, localPlayer.x, localPlayer.y, localPlayer.width, localPlayer.height, localPlayer.color);
+        localStorage.setItem('rectData', JSON.stringify({ id: localPlayer.id, x: localPlayer.x, y: localPlayer.y, width: localPlayer.width, height: localPlayer.height, color: localPlayer.color }));
         
         if (chatMessages[localPlayer.id]) {
             chatMessages[localPlayer.id].x = localPlayer.x;
@@ -98,29 +99,31 @@ document.addEventListener('keydown', function (event) {
         
         draw();
     }
+    
 });
 
 //WebSocket stuff
 const WS_TOKEN = localStorage.getItem('ws_token') || 'my-secret-token';
 const roomId = localStorage.getItem('roomId');
-const socket = new WebSocket(`ws://localhost:5000?token=${WS_TOKEN}&roomId=${roomId}`);
+const socket = new WebSocket(`wss://wom-websocket.azurewebsites.net/?token=${WS_TOKEN}&roomId=${roomId}`);
+//const socket = new WebSocket(`ws://localhost:5000/?token=${WS_TOKEN}&roomId=${roomId}`);
 
 initializeWebSocket(socket);
 
 socket.onopen = function () {
     console.log("Connected to WebSocket server");
-    sendMovement(localPlayer.id, localPlayer.x, localPlayer.y, localPlayer.color); 
+    sendMovement(localPlayer.id, localPlayer.x, localPlayer.y, localPlayer.width, localPlayer.height, localPlayer.color); 
 };
 socket.onmessage = (event) => {
     const data = JSON.parse(event.data);
 
     if (data.type === 'move') {
-        const { id, x, y, color, left } = data;
+        const { id, x, y, width, height, color, left } = data;
         if (left) {
             delete otherPlayers[id];
         } else {
             if (id !== localPlayer.id) {
-                otherPlayers[id] = { id, x, y, color, width: 50, height: 50 };
+                otherPlayers[id] = { id, x, y, width, height, color };
             }
 
             if (chatMessages[id]) {

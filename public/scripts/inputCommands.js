@@ -4,7 +4,7 @@ import { changePlayerSize } from './player.js';
 
 /* Play music */
 
-const audio = new Audio('../assets/images/Tersbetoni  Taivas Ly Tulta.mp3');
+const audio = new Audio('../assets/taivas8bit.mp3');
 
 
 export function handleCommand(command) {
@@ -34,5 +34,26 @@ export function handleCommand(command) {
             break;
         default:
             console.log('Unknown command');
+    }
+}
+
+export function handleServerCommand(command) {
+    switch (command) {
+        case '/play taivas':
+            console.log('Playing music...');
+            audio.volume = 0.5;
+            audio.play();
+            break;
+        case '/stop':
+            if (audio) {
+                console.log('Stopping music...');
+                audio.pause();
+                audio.currentTime = 0;
+            } else {
+                console.log('Nothing is playing...');
+            }
+            break;
+        default:
+            break;
     }
 }

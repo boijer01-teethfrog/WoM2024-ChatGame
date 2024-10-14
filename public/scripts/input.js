@@ -1,4 +1,4 @@
-import { handleCommand } from './inputCommands.js';
+import { handleCommand, handleServerCommand } from './inputCommands.js';
 
 function showModal() {
     const modal = document.getElementById('MyModal');
@@ -140,7 +140,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
 const WS_TOKEN = localStorage.getItem('ws_token') || 'my-secret-token';
 const roomId = localStorage.getItem('roomId');
-const socket = new WebSocket(`ws://localhost:5000?token=${WS_TOKEN}&roomId=${roomId}`);
+const socket = new WebSocket(`wss://wom-websocket.azurewebsites.net/?token=${WS_TOKEN}&roomId=${roomId}`);
+//const socket = new WebSocket(`ws://localhost:5000/?token=${WS_TOKEN}&roomId=${roomId}`);
 
 socket.onopen = function () {
     console.log("Connected to WebSocket server for chat");
@@ -155,6 +156,11 @@ socket.onmessage = (event) => {
     if (data.type === 'chat') {
         const { id, chatMessage } = data;
 
+        if (String(data.message).startsWith('/')) {
+            const command = data.message;
+            handleServerCommand(command);
+        }
+        
         const rectData = JSON.parse(localStorage.getItem('rectData')) || {};
         if (rectData && rectData.id === id) {
             handleMessageDisplay(rectData, chatMessage, document.getElementById('MyModal'));

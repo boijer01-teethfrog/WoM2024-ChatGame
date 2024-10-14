@@ -5,7 +5,7 @@ export function initializeWebSocket(ws) {
 }
 
 // Sends movement to the server
-export function sendMovement(id, x, y, color) {
+export function sendMovement(id, x, y, width, height, color) {
     const roomId = localStorage.getItem('roomId'); // Get roomId from localStorage
     if (!roomId) {
         console.error("Room ID är inte definierat.");
@@ -17,6 +17,8 @@ export function sendMovement(id, x, y, color) {
         id,
         x,
         y,
+        width,
+        height,
         color,
         roomId
     });
