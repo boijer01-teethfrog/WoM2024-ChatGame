@@ -122,7 +122,7 @@ function updateMessagePosition() {
     }
 }
 
-setInterval(updateMessagePosition, 100); 
+setInterval(updateMessagePosition, 1); 
 
 // Event listener for keydown to show modal
 document.addEventListener('keydown', handleKeyDown);
@@ -139,9 +139,9 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 const WS_TOKEN = localStorage.getItem('ws_token') || 'my-secret-token';
-const roomId = localStorage.getItem('roomId');
-const socket = new WebSocket(`wss://wom-websocket.azurewebsites.net/?token=${WS_TOKEN}&roomId=${roomId}`);
-//const socket = new WebSocket(`ws://localhost:5000/?token=${WS_TOKEN}&roomId=${roomId}`);
+
+const socket = new WebSocket(`wss://wom-websocket.azurewebsites.net/?token=${WS_TOKEN}`);
+/* const socket = new WebSocket(`ws://localhost:5000/?token=${WS_TOKEN}`); */
 
 socket.onopen = function () {
     console.log("Connected to WebSocket server for chat");
