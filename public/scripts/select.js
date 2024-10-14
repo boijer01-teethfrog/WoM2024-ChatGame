@@ -44,5 +44,7 @@ document.getElementById('color-picker').addEventListener('input', (event) => {
 document.getElementById('join-room-button').addEventListener('click', (event) => {
     const roomId = document.getElementById('room-code').value;
     console.log(roomId);
+    localStorage.setItem('roomId', roomId);
+
     window.location.href = `/room/`;
 });

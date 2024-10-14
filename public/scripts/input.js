@@ -2,10 +2,9 @@ import { handleCommand } from './inputCommands.js';
 
 function showModal() {
     const modal = document.getElementById('MyModal');
-    if (modal) {
-        modal.style.visibility = 'visible';
-    }
+    modal.style.visibility = 'visible';
     focusInput(modal);
+
 }
 
 function focusInput(modal) {
@@ -14,19 +13,30 @@ function focusInput(modal) {
 }
 
 function handleKeyDown(event) {
-    const modal = document.getElementById('MyModal');
     if (event.key === 'Enter') {
+        const modal = document.getElementById('MyModal');
         if (modal.style.visibility !== 'visible') {
             event.preventDefault();
+            showModal();
         }
-        showModal();
     }
 }
 
 function handleSubmit(e) {
     e.preventDefault();
     const modal = document.getElementById('MyModal');
-    const formData = new FormData(document.querySelector('form'));
+    if (!modal) {
+        console.error('Modal element with ID "MyModal" not found.');
+        return;
+    }
+
+    const form = document.querySelector('form');
+    if (!form) {
+        console.error('Form element not found.');
+        return;
+    }
+
+    const formData = new FormData(form);
     const message = formData.get('message');
     console.log('Message sent from form:', message);
 
@@ -38,7 +48,7 @@ function handleSubmit(e) {
 
     if (message.startsWith('/')) {
         const command = message;
-        console.log(command);
+        console.log('Handling command:', command);
         handleCommand(command);
     }
 
@@ -54,15 +64,48 @@ function handleMessageDisplay(rectData, message, modal) {
     }
 
     const messageElement = createMessageElement(message, rectData);
-    document.body.appendChild(messageElement);
-    currentMessageElement = messageElement;
+    if (messageElement) {
+        document.body.appendChild(messageElement);
+        currentMessageElement = messageElement;
 
-    setTimeout(() => {
-        hideMessage(currentMessageElement);
-    }, 5000);
+        setTimeout(() => {
+            hideMessage(currentMessageElement);
+        }, 5000);
+    } else {
+        console.error('Failed to create message element.');
+    }
 
-    document.querySelector('form').reset();
-    modal.style.visibility = 'hidden';
+    formResetAndHideModal(modal);
+}
+
+// Helper function to reset form and hide modal
+function formResetAndHideModal(modal) {
+    const form = document.querySelector('form');
+    if (form) {
+        form.reset();
+        console.log('Form has been reset.');
+    } else {
+        console.error('Form element not found during reset.');
+    }
+
+    modal.style.visibility = 'hidden'; 
+    console.log('Modal is hidden');
+}
+
+function createMessageElement(message, rectData) {
+    const div = document.createElement('div');
+    div.style.position = 'absolute';
+    div.style.left = `${rectData.x + 8}px`;
+    div.style.top = `${rectData.y - 30}px`;
+    div.textContent = message;
+    return div;
+}
+
+function hideMessage(element) {
+    if (element) {
+        element.remove();
+        console.log('Message element removed.');
+    }
 }
 
 function updateMessagePosition() {
@@ -72,25 +115,29 @@ function updateMessagePosition() {
         if (messageElement) {
             messageElement.style.left = `${rectData.x + 8}px`;
             messageElement.style.top = `${rectData.y - 30}px`;
+            console.log('Message position updated.');
         }
     } else {
         console.log('rectData not found in localStorage');
     }
 }
 
-setInterval(updateMessagePosition, 1);
+setInterval(updateMessagePosition, 100); 
 
-
+// Event listener for keydown to show modal
 document.addEventListener('keydown', handleKeyDown);
 
+// Event listener for form submission after DOM is loaded
 document.addEventListener('DOMContentLoaded', () => {
     const form = document.querySelector('form');
-    form.addEventListener('submit', handleSubmit);
+    if (form) {
+        form.addEventListener('submit', handleSubmit);
+        console.log('Form submit event listener added.');
+    } else {
+        console.error('Form element not found on DOMContentLoaded.');
+    }
 });
 
-setInterval(updateMessagePosition, 1);
-
-//websocket stufff
 const WS_TOKEN = localStorage.getItem('ws_token') || 'my-secret-token';
 const socket = new WebSocket(`wss://wom-websocket.azurewebsites.net/?token=${WS_TOKEN}`);
 
@@ -121,4 +168,5 @@ function sendChatMessage(id, message) {
         chatMessage: message
     });
     socket.send(payload);
+    console.log('Chat message sent:', payload);
 }
