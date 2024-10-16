@@ -11,12 +11,14 @@
 
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Room</title>
     <link rel="stylesheet" href="./styles/select.css">
 </head>
+
 <body>
     <header>
         <h1 id="greetingText">Welcome user!</h1>
@@ -28,9 +30,12 @@
             <input type="color" id="color-picker">
         </section>
         <section id="join-room">
+            <h2>Join a Room</h2>
+            <input type="number" id="room-code" placeholder="Enter room code" min="0">
             <button id="join-room-button">Join</button>
         </section>
     </main>
     <script type="module" src="./scripts/select.js"></script>
 </body>
+
 </html>
