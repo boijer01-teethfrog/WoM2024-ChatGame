@@ -18,13 +18,13 @@ const localPlayer = {
 
 let socket;
 let lastMovementTime = 0;
-const movementInterval = 16; //updates movement in ms
+const movementInterval = 16; //updates movement in ms (60 fps ish)
 let movementRequestId = null;
 
 function draw() {
     ctx.clearRect(0, 0, c.width, c.height);
 
-    //draws local player
+    //Draw local player
     ctx.fillStyle = localPlayer.color;
     ctx.fillRect(localPlayer.x, localPlayer.y, localPlayer.width, localPlayer.height);
     ctx.fillStyle = "black";
@@ -32,7 +32,7 @@ function draw() {
     ctx.textAlign = "center";
     ctx.fillText(localPlayer.id, localPlayer.x + localPlayer.width / 2, localPlayer.y + 70);
 
-    //draws online players
+    //Draw other players
     for (const id in otherPlayers) {
         const player = otherPlayers[id];
         ctx.fillStyle = player.color;
@@ -41,7 +41,7 @@ function draw() {
         ctx.fillText(player.id, player.x + player.width / 2, player.y + 70);
     }
 
-    //draws messages
+    //Draw chat messages
     for (const id in chatMessages) {
         const messageData = chatMessages[id];
         if (messageData) {
@@ -63,7 +63,7 @@ function draw() {
                 messageData.message,
                 messageData.x,
                 messageData.y - bubbleHeight - 20
-            )
+            );
         }
     }
 }
@@ -75,7 +75,7 @@ export function changePlayerSize(w, h) {
     draw();
 }
 
-//movement logic, also makes sure player wont go outside the room width/height
+//Movement logic, also makes sure player won't go outside the room width/height
 function handleMovement(event) {
     let moved = false;
     switch (event.key) {
@@ -107,7 +107,14 @@ function handleMovement(event) {
 
     //Updates player data
     if (moved) {
-        localStorage.setItem('rectData', JSON.stringify({ id: localPlayer.id, x: localPlayer.x, y: localPlayer.y, width: localPlayer.width, height: localPlayer.height, color: localPlayer.color }));
+        localStorage.setItem('rectData', JSON.stringify({
+            id: localPlayer.id,
+            x: localPlayer.x,
+            y: localPlayer.y,
+            width: localPlayer.width,
+            height: localPlayer.height,
+            color: localPlayer.color
+        }));
 
         if (chatMessages[localPlayer.id]) {
             chatMessages[localPlayer.id].x = localPlayer.x;
@@ -115,26 +122,18 @@ function handleMovement(event) {
         }
 
         draw();
-        
-        //makes things smoother hopefully
-        if (!movementRequestId) {
-            movementRequestId = requestAnimationFrame(sendMovementUpdate);
-        }
     }
 }
 
 document.addEventListener('keydown', handleMovement);
 
-function sendMovementUpdate() {
-    const currentTime = Date.now();
-    if (currentTime - lastMovementTime > movementInterval) {
-        sendMovement(localPlayer.id, localPlayer.x, localPlayer.y, localPlayer.width, localPlayer.height, localPlayer.color);
-        lastMovementTime = currentTime;
-    }
-    movementRequestId = null;
+//Function to send movement updates at 60fps
+function sendMovementUpdateLoop() {
+    sendMovement(localPlayer.id, localPlayer.x, localPlayer.y, localPlayer.width, localPlayer.height, localPlayer.color);
+    requestAnimationFrame(sendMovementUpdateLoop); // Continue the loop to send movement updates at ~60fps
 }
 
-//WebSocket stuff
+// WebSocket stuff
 const WS_TOKEN = localStorage.getItem('ws_token') || 'my-secret-token';
 const roomId = localStorage.getItem('roomId');
 
@@ -166,9 +165,8 @@ function connectWebSocket() {
                     chatMessages[id].y = y;
                 }
             }
-        }
-
-        else if (data.type === 'chat') {
+            draw();
+        } else if (data.type === 'chat') {
             const { id, message } = data;
             const player = otherPlayers[id] || localPlayer;
             const timestamp = Date.now();
@@ -199,10 +197,13 @@ function connectWebSocket() {
 
 connectWebSocket();
 
-//game loop
+//Start sending movement updates at 60Hz
+requestAnimationFrame(sendMovementUpdateLoop);
+
+//Game loop
 function gameLoop() {
     draw();
-    requestAnimationFrame(gameLoop); //updates 60hz i think
+    requestAnimationFrame(gameLoop); //updates at ~60 Hz
 }
 
 gameLoop();
