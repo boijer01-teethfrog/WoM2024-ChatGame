@@ -4,7 +4,7 @@ import { sendMovement, initializeWebSocket } from "./serverController.js";
 const c = document.getElementById("myCanvas");
 const ctx = c.getContext("2d");
 const otherPlayers = {};
-const chatMessages = {};  
+const chatMessages = {};
 
 const localPlayer = {
     id: getUsername(),
@@ -16,9 +16,15 @@ const localPlayer = {
     speed: 10
 };
 
+let socket;
+let lastMovementTime = 0;
+const movementInterval = 16; //updates movement in ms
+let movementRequestId = null;
+
 function draw() {
     ctx.clearRect(0, 0, c.width, c.height);
 
+    //draws local player
     ctx.fillStyle = localPlayer.color;
     ctx.fillRect(localPlayer.x, localPlayer.y, localPlayer.width, localPlayer.height);
     ctx.fillStyle = "black";
@@ -26,6 +32,7 @@ function draw() {
     ctx.textAlign = "center";
     ctx.fillText(localPlayer.id, localPlayer.x + localPlayer.width / 2, localPlayer.y + 70);
 
+    //draws online players
     for (const id in otherPlayers) {
         const player = otherPlayers[id];
         ctx.fillStyle = player.color;
@@ -34,6 +41,7 @@ function draw() {
         ctx.fillText(player.id, player.x + player.width / 2, player.y + 70);
     }
 
+    //draws messages
     for (const id in chatMessages) {
         const messageData = chatMessages[id];
         if (messageData) {
@@ -42,10 +50,10 @@ function draw() {
             const bubbleWidth = textWidth + bubblePadding * 2;
             const bubbleHeight = 30;
 
-            ctx.fillStyle = "#d6d6d6"; 
+            ctx.fillStyle = "#d6d6d6";
             ctx.fillRect(
-                messageData.x - bubbleWidth / 2, 
-                messageData.y - bubbleHeight - 40, 
+                messageData.x - bubbleWidth / 2,
+                messageData.y - bubbleHeight - 40,
                 bubbleWidth,
                 bubbleHeight
             );
@@ -54,7 +62,7 @@ function draw() {
             ctx.fillText(
                 messageData.message,
                 messageData.x,
-                messageData.y - bubbleHeight - 20 
+                messageData.y - bubbleHeight - 20
             )
         }
     }
@@ -67,98 +75,129 @@ export function changePlayerSize(w, h) {
     draw();
 }
 
-document.addEventListener('keydown', function (event) {
+//movement logic, also makes sure player wont go outside the room width/height
+function handleMovement(event) {
     let moved = false;
     switch (event.key) {
         case 'ArrowUp':
-            localPlayer.y -= localPlayer.speed;
-            moved = true;
+            if (localPlayer.y - localPlayer.speed >= 0) {
+                localPlayer.y -= localPlayer.speed;
+                moved = true;
+            }
             break;
         case 'ArrowDown':
-            localPlayer.y += localPlayer.speed;
-            moved = true;
+            if (localPlayer.y + localPlayer.height + localPlayer.speed <= c.height) {
+                localPlayer.y += localPlayer.speed;
+                moved = true;
+            }
             break;
         case 'ArrowLeft':
-            localPlayer.x -= localPlayer.speed;
-            moved = true;
+            if (localPlayer.x - localPlayer.speed >= 0) {
+                localPlayer.x -= localPlayer.speed;
+                moved = true;
+            }
             break;
         case 'ArrowRight':
-            localPlayer.x += localPlayer.speed;
-            moved = true;
+            if (localPlayer.x + localPlayer.width + localPlayer.speed <= c.width) {
+                localPlayer.x += localPlayer.speed;
+                moved = true;
+            }
             break;
     }
 
+    //Updates player data
     if (moved) {
-        sendMovement(localPlayer.id, localPlayer.x, localPlayer.y, localPlayer.width, localPlayer.height, localPlayer.color);
         localStorage.setItem('rectData', JSON.stringify({ id: localPlayer.id, x: localPlayer.x, y: localPlayer.y, width: localPlayer.width, height: localPlayer.height, color: localPlayer.color }));
-        
+
         if (chatMessages[localPlayer.id]) {
             chatMessages[localPlayer.id].x = localPlayer.x;
             chatMessages[localPlayer.id].y = localPlayer.y;
         }
-        
+
         draw();
+        
+        //makes things smoother hopefully
+        if (!movementRequestId) {
+            movementRequestId = requestAnimationFrame(sendMovementUpdate);
+        }
     }
-    
-});
+}
+
+document.addEventListener('keydown', handleMovement);
+
+function sendMovementUpdate() {
+    const currentTime = Date.now();
+    if (currentTime - lastMovementTime > movementInterval) {
+        sendMovement(localPlayer.id, localPlayer.x, localPlayer.y, localPlayer.width, localPlayer.height, localPlayer.color);
+        lastMovementTime = currentTime;
+    }
+    movementRequestId = null;
+}
 
 //WebSocket stuff
 const WS_TOKEN = localStorage.getItem('ws_token') || 'my-secret-token';
 const roomId = localStorage.getItem('roomId');
- const socket = new WebSocket(`wss://wom-websocket.azurewebsites.net/?token=${WS_TOKEN}&roomId=${roomId}`); 
-/*  const socket = new WebSocket(`ws://localhost:5000/?token=${WS_TOKEN}&roomId=${roomId}`);  */
 
- 
+function connectWebSocket() {
+    socket = new WebSocket(`wss://wom-websocket.azurewebsites.net/?token=${WS_TOKEN}&roomId=${roomId}`); //production
+    /*  const socket = new WebSocket(`ws://localhost:5000/?token=${WS_TOKEN}&roomId=${roomId}`);  */ //local
 
-initializeWebSocket(socket);
+    initializeWebSocket(socket);
 
-socket.onopen = function () {
-    console.log("Connected to WebSocket server");
-    sendMovement(localPlayer.id, localPlayer.x, localPlayer.y, localPlayer.width, localPlayer.height, localPlayer.color); 
-};
-socket.onmessage = (event) => {
-    const data = JSON.parse(event.data);
+    socket.onopen = function () {
+        console.log("Connected to WebSocket server");
+        sendMovement(localPlayer.id, localPlayer.x, localPlayer.y, localPlayer.width, localPlayer.height, localPlayer.color);
+    };
 
-    if (data.type === 'move') {
-        const { id, x, y, width, height, color, left } = data;
-        if (left) {
-            delete otherPlayers[id];
-        } else {
-            if (id !== localPlayer.id) {
-                otherPlayers[id] = { id, x, y, width, height, color };
-            }
+    socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
 
-            if (chatMessages[id]) {
-                chatMessages[id].x = x;
-                chatMessages[id].y = y;
+        if (data.type === 'move') {
+            const { id, x, y, width, height, color, left } = data;
+            if (left) {
+                delete otherPlayers[id];
+            } else {
+                if (id !== localPlayer.id) {
+                    otherPlayers[id] = { id, x, y, width, height, color };
+                }
+
+                if (chatMessages[id]) {
+                    chatMessages[id].x = x;
+                    chatMessages[id].y = y;
+                }
             }
         }
-    }
 
-    else if (data.type === 'chat') {
-        const { id, message } = data;
-        const player = otherPlayers[id] || localPlayer;
+        else if (data.type === 'chat') {
+            const { id, message } = data;
+            const player = otherPlayers[id] || localPlayer;
+            const timestamp = Date.now();
 
-        chatMessages[id] = { x: player.x, y: player.y, message: message };
+            chatMessages[id] = { x: player.x, y: player.y, message: message, timestamp: timestamp };
 
-        setTimeout(() => {
-            delete chatMessages[id];
-            draw();
-        }, 5000);
-    }
+            //message is active for 5000ms, then deletes it
+            setTimeout(() => {
+                if (chatMessages[id] && Date.now() - chatMessages[id].timestamp >= 5000) {
+                    delete chatMessages[id];
+                    draw();
+                }
+            }, 5000);
+        }
 
-    draw();
-};
+        draw();
+    };
 
+    socket.onclose = () => {
+        console.log("Disconnected from WebSocket server, attempting to reconnect...");
+        setTimeout(connectWebSocket, 1000);
+    };
 
-socket.onclose = () => {
-    console.log("Disconnected from WebSocket server");
-};
+    socket.onerror = (error) => {
+        console.error("Error :(", error);
+    };
+}
 
-socket.onerror = (error) => {
-    console.error("Error :(", error);
-};
-
+connectWebSocket();
 
 //game loop
 function gameLoop() {

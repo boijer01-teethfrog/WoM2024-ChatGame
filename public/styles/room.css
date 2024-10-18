@@ -80,3 +80,7 @@ header img {
     background: transparent;
     font-family: "Lucida Console", "Courier New", monospace;
   }
+
+#myCanvas {
+    border: grey solid 1px;
+}
