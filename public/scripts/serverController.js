@@ -20,7 +20,7 @@ export function sendMovement(id, x, y, width, height, color) {
     if (socket && socket.readyState === WebSocket.OPEN) {
         socket.send(payload);
     } else {
-        console.warn("WebSocket är inte öppen. Kan inte skicka rörelse.");
+        console.warn("WebSocket not open");
     }
 }
 
@@ -40,6 +40,6 @@ export function sendChat(chatMessage) {
     if (socket && socket.readyState === WebSocket.OPEN) {
         socket.send(payload);
     } else {
-        console.warn("WebSocket är inte öppen. Kan inte skicka chatt.");
+        console.warn("WebSocket not open");
     }
 }

@@ -134,12 +134,13 @@ function sendMovementUpdateLoop() {
 }
 
 // WebSocket stuff
-const WS_TOKEN = localStorage.getItem('ws_token') || 'my-secret-token';
+const WS_TOKEN = localStorage.getItem('ws_token');
+console.log("ws token: ", WS_TOKEN);
 const roomId = localStorage.getItem('roomId');
 
 function connectWebSocket() {
-    socket = new WebSocket(`wss://wom-websocket.azurewebsites.net/?token=${WS_TOKEN}&roomId=${roomId}`); //production
-    /*  const socket = new WebSocket(`ws://localhost:5000/?token=${WS_TOKEN}&roomId=${roomId}`);  */ //local
+    socket = new WebSocket(`wss://wom-websocket.azurewebsites.net/?token=${WS_TOKEN}&roomId=${roomId}`);//production
+    /*  const socket = new WebSocket(`ws://localhost:5000/?token=${WS_TOKEN}&roomId=${roomId}`);  */
 
     initializeWebSocket(socket);
 

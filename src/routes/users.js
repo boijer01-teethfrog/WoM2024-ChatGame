@@ -70,10 +70,22 @@ router.post("/login", async (req, res) => {
     { expiresIn: "30d" }
   );
 
+  // Generera WS_TOKEN separat
+  const wsToken = await jwt.sign(
+    {
+      sub: user.id,
+      username: user.username,
+      role: user.role,
+    },
+    process.env.WS_SECRET, 
+    { expiresIn: "7d" } 
+  );
+
   res.send({
     success: true,
     msg: "Login OK",
     jwt: token,
+    wsToken: wsToken,
     username: user.username,
     hex: user.hex,
     role: user.role,
