@@ -16,10 +16,16 @@ const localPlayer = {
     speed: 10
 };
 
+localStorage.setItem('rectData', JSON.stringify({
+    id: localPlayer.id,
+    x: localPlayer.x,
+    y: localPlayer.y,
+    width: localPlayer.width,
+    height: localPlayer.height,
+    color: localPlayer.color
+}));
+
 let socket;
-let lastMovementTime = 0;
-const movementInterval = 16; //updates movement in ms (60 fps ish)
-let movementRequestId = null;
 
 function draw() {
     ctx.clearRect(0, 0, c.width, c.height);
