@@ -80,3 +80,8 @@ header img {
     background: transparent;
     font-family: "Lucida Console", "Courier New", monospace;
   }
+
+  header h3 {
+    margin: 0 auto;
+    font-family: "Lucida Console", "Courier New", monospace;
+  }

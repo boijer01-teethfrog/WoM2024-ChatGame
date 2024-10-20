@@ -41,9 +41,16 @@ document.getElementById('color-picker').addEventListener('input', (event) => {
     }, 500);
 });
 
-document.getElementById('join-room-button').addEventListener('click', (event) => {
-    const roomId = document.getElementById('room-code').value;
-    console.log(roomId);
-    localStorage.setItem('roomId', roomId);
-    window.location.href = `/room/`;
+
+document.getElementById('join-room-button').addEventListener('click', function() {
+    const roomCode = document.getElementById('room-code').value;
+    const errorMessage = document.getElementById('error-message');
+
+    if (roomCode === '') {
+        errorMessage.style.display = 'block';
+    } else {
+        errorMessage.style.display = 'none';
+        localStorage.setItem('roomId', roomCode);
+        window.location.href = `/room/`;
+    }
 });

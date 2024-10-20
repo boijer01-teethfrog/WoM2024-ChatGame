@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', () => {
 const WS_TOKEN = localStorage.getItem('ws_token');
 const roomId = localStorage.getItem('roomId');
 const socket = new WebSocket(`wss://wom-websocket.azurewebsites.net/?token=${WS_TOKEN}&roomId=${roomId}`);
-/*  const socket = new WebSocket(`ws://localhost:5000/?token=${WS_TOKEN}&roomId=${roomId}`); */
+//const socket = new WebSocket(`ws://localhost:5000/?token=${WS_TOKEN}&roomId=${roomId}`);
 
 socket.onopen = function () {
     console.log("Connected to WebSocket server for chat");

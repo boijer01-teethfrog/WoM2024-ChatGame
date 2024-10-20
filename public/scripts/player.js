@@ -146,7 +146,7 @@ const roomId = localStorage.getItem('roomId');
 
 function connectWebSocket() {
     socket = new WebSocket(`wss://wom-websocket.azurewebsites.net/?token=${WS_TOKEN}&roomId=${roomId}`);//production
-    /*  const socket = new WebSocket(`ws://localhost:5000/?token=${WS_TOKEN}&roomId=${roomId}`);  */
+    //const socket = new WebSocket(`ws://localhost:5000/?token=${WS_TOKEN}&roomId=${roomId}`);
 
     initializeWebSocket(socket);
 

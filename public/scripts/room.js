@@ -17,3 +17,8 @@ if (backButton) {
         window.history.back();
     });
 }
+
+const roomIdtext = document.getElementById('roomIdtext');
+const roomId = localStorage.getItem('roomId');
+
+roomIdtext.innerText = `Room: ${roomId}`
